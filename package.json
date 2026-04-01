@@ -1,0 +1,61 @@
+{
+  "name": "xiaomi-code",
+  "version": "1.0.0",
+  "description": "小米代码助手 - 为发烧友打造的智能编程工具",
+  "main": "dist/cli.js",
+  "type": "module",
+  "bin": {
+    "xiaomi-code": "dist/cli.js",
+    "mi-code": "dist/cli.js",
+    "mi": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "bun run build.ts",
+    "dev": "bun run src/entrypoints/cli.tsx",
+    "test": "bun test",
+    "lint": "biome check src/",
+    "format": "biome format src/ --write"
+  },
+  "keywords": [
+    "xiaomi",
+    "mi",
+    "ai",
+    "coding",
+    "assistant",
+    "cli",
+    "code-assistant",
+    "volcano-engine",
+    "doubao",
+    "deepseek",
+    "kimi"
+  ],
+  "author": "Xiaomi Code Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "axios": "^1.14.0",
+    "chalk": "^5.6.2",
+    "commander": "^12.1.0",
+    "conf": "^13.0.1",
+    "fs-extra": "^11.2.0",
+    "glob": "^11.0.0",
+    "ink": "^5.0.1",
+    "inquirer": "^12.0.0",
+    "keytar": "^7.9.0",
+    "open": "^10.1.0",
+    "ora": "^8.1.0",
+    "react": "^18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "@types/react": "^18.3.11",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "typescript": "^5.6.3",
+    "bun-types": "latest"
+  }
+}

@@ -1,0 +1,22 @@
+#!/bin/bash
+# Xiaomi Code 快捷启动脚本
+# 为发烧而生
+
+REAL_HOME="$HOME"
+BUN_BIN="$REAL_HOME/.bun/bin/bun"
+CLI_JS="$REAL_HOME/xiaomi-code/dist/entrypoints/cli.js"
+
+# 检查构建输出是否存在
+if [ ! -f "$CLI_JS" ]; then
+    echo "❌ 未找到构建文件，请先运行: bun run build"
+    exit 1
+fi
+
+# 检查Bun
+if [ ! -f "$BUN_BIN" ]; then
+    echo "❌ 未找到 Bun，请先安装: https://bun.sh"
+    exit 1
+fi
+
+# 启动
+exec "$BUN_BIN" "$CLI_JS" "$@"

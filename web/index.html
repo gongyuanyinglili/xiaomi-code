@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xiaomi Code - 为发烧而生</title>
+  <style>
+    :root {
+      --xiaomi-orange: #FF6900;
+      --xiaomi-orange-light: #FF8C42;
+      --xiaomi-dark: #1A1A1A;
+      --xiaomi-gray: #333333;
+      --xiaomi-light: #F5F5F5;
+      --text-primary: #FFFFFF;
+      --text-secondary: #999999;
+      --success: #00B578;
+      --error: #FF4D4F;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: var(--text-primary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 2px solid var(--xiaomi-orange);
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--xiaomi-orange);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .logo-text h1 {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--xiaomi-orange) 0%, var(--xiaomi-orange-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Settings Panel */
+    .settings-panel {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 105, 0, 0.2);
+    }
+
+    .settings-title {
+      font-size: 14px;
+      color: var(--xiaomi-orange);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .setting-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .setting-item label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .setting-item input,
+    .setting-item select {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 105, 0, 0.3);
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .setting-item input:focus,
+    .setting-item select:focus {
+      border-color: var(--xiaomi-orange);
+      box-shadow: 0 0 0 2px rgba(255, 105, 0, 0.2);
+    }
+
+    .setting-item input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    /* Chat Container */
+    .chat-container {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255, 105, 0, 0.2);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .message.user .message-avatar {
+      background: var(--xiaomi-gray);
+    }
+
+    .message.assistant .message-avatar {
+      background: var(--xiaomi-orange);
+    }
+
+    .message-content {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    .message.user .message-content {
+      background: var(--xiaomi-orange);
+      color: white;
+    }
+
+    .message-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+    }
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: var(--xiaomi-orange);
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out both;
+    }
+
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typing {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Input Area */
+    .chat-input-area {
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(255, 105, 0, 0.2);
+    }
+
+    .input-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 105, 0, 0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-size: 14px;
+      resize: none;
+      outline: none;
+      min-height: 50px;
+      max-height: 150px;
+      font-family: inherit;
+    }
+
+    .chat-input:focus {
+      border-color: var(--xiaomi-orange);
+      box-shadow: 0 0 0 2px rgba(255, 105, 0, 0.2);
+    }
+
+    .send-btn {
+      background: var(--xiaomi-orange);
+      border: none;
+      border-radius: 12px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover {
+      background: var(--xiaomi-orange-light);
+      transform: scale(1.05);
+    }
+
+    .send-btn:disabled {
+      background: var(--xiaomi-gray);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .send-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-top: 1px solid rgba(255, 105, 0, 0.1);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .status-dot.error {
+      background: var(--error);
+    }
+
+    .status-dot.connecting {
+      background: var(--xiaomi-orange);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Code blocks */
+    pre {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 8px 0;
+    }
+
+    code {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--xiaomi-orange);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--xiaomi-orange-light);
+    }
+
+    /* Welcome Message */
+    .welcome-message {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+
+    .welcome-message h2 {
+      color: var(--xiaomi-orange);
+      margin-bottom: 10px;
+    }
+
+    .suggestion-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .suggestion-chip {
+      background: rgba(255, 105, 0, 0.1);
+      border: 1px solid rgba(255, 105, 0, 0.3);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .suggestion-chip:hover {
+      background: rgba(255, 105, 0, 0.2);
+      border-color: var(--xiaomi-orange);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">mi</div>
+        <div class="logo-text">
+          <h1>Xiaomi Code</h1>
+          <p>为发烧而生 | Born for Innovation</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel">
+      <div class="settings-title">
+        <span>⚙️</span> API 配置
+      </div>
+      <div class="settings-grid">
+        <div class="setting-item">
+          <label>API Key</label>
+          <input type="password" id="apiKey" placeholder="输入你的 API Key">
+        </div>
+        <div class="setting-item">
+          <label>提供商</label>
+          <select id="provider">
+            <option value="volcano">火山引擎 (推荐)</option>
+            <option value="deepseek">DeepSeek</option>
+            <option value="kimi">Moonshot Kimi</option>
+            <option value="zhipu">智谱AI</option>
+            <option value="qwen">通义千问</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label>模型</label>
+          <select id="model">
+            <option value="doubao-seed-2-0-pro-260215" selected>🌟 豆包Seed 2.0 Pro (推荐)</option>
+            <option value="doubao-seed-2-0-code-preview-260215">💻 豆包Seed 2.0 Code (代码)</option>
+            <option value="doubao-seed-2-0-lite-260215">⚡ 豆包Seed 2.0 Lite (轻量)</option>
+            <option value="doubao-seed-2-0-mini-260215">🔹 豆包Seed 2.0 Mini</option>
+            <option value="doubao-1-5-pro-32k-250115">豆包 1.5 Pro 32K</option>
+            <option value="doubao-1-5-lite-32k-250115">豆包 1.5 Lite 32K</option>
+            <option value="doubao-seed-1-6-250615">豆包 Seed 1.6</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label>API 端点 (可选)</label>
+          <input type="text" id="baseUrl" placeholder="使用默认端点">
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="welcome-message">
+          <h2>👋 欢迎使用 Xiaomi Code</h2>
+          <p>请在上方配置 API Key，然后开始对话</p>
+          <div class="suggestion-chips">
+            <div class="suggestion-chip" onclick="setInput('帮我写一个Python爬虫')">帮我写一个Python爬虫</div>
+            <div class="suggestion-chip" onclick="setInput('解释什么是闭包')">解释什么是闭包</div>
+            <div class="suggestion-chip" onclick="setInput('优化这段代码')">优化这段代码</div>
+            <div class="suggestion-chip" onclick="setInput('写一个正则表达式')">写一个正则表达式</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="input-wrapper">
+          <textarea 
+            class="chat-input" 
+            id="chatInput" 
+            placeholder="输入消息... (Enter发送, Shift+Enter换行)"
+            rows="1"
+          ></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-indicator">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">就绪</span>
+        </div>
+        <span id="modelInfo">模型: 未选择</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 配置
+    const providerConfigs = {
+      volcano: {
+        baseUrl: 'https://ark.cn-beijing.volces.com/api/v3',
+        models: {
+          'doubao-seed-2-0-pro-260215': '🌟 豆包Seed 2.0 Pro (推荐)',
+          'doubao-seed-2-0-code-preview-260215': '💻 豆包Seed 2.0 Code (代码)',
+          'doubao-seed-2-0-lite-260215': '⚡ 豆包Seed 2.0 Lite (轻量)',
+          'doubao-seed-2-0-mini-260215': '🔹 豆包Seed 2.0 Mini',
+          'doubao-1-5-pro-32k-250115': '豆包 1.5 Pro 32K',
+          'doubao-1-5-lite-32k-250115': '豆包 1.5 Lite 32K',
+          'doubao-seed-1-6-250615': '豆包 Seed 1.6'
+        }
+      },
+      deepseek: {
+        baseUrl: 'https://api.deepseek.com/v1',
+        models: {
+          'deepseek-chat': 'DeepSeek Chat',
+          'deepseek-reasoner': 'DeepSeek Reasoner',
+          'deepseek-coder': 'DeepSeek Coder'
+        }
+      },
+      kimi: {
+        baseUrl: 'https://api.moonshot.cn/v1',
+        models: {
+          'moonshot-v1-8k': 'Kimi 8K',
+          'moonshot-v1-32k': 'Kimi 32K',
+          'moonshot-v1-128k': 'Kimi 128K'
+        }
+      },
+      zhipu: {
+        baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
+        models: {
+          'glm-4-flash': 'GLM-4 Flash',
+          'glm-4-plus': 'GLM-4 Plus',
+          'codegeex-4': 'CodeGeeX-4'
+        }
+      },
+      qwen: {
+        baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+        models: {
+          'qwen-turbo': 'Qwen Turbo',
+          'qwen-plus': 'Qwen Plus',
+          'qwen-max': 'Qwen Max'
+        }
+      }
+    };
+
+    // 状态
+    let isGenerating = false;
+    let messageHistory = [];
+
+    // 元素
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const apiKeyInput = document.getElementById('apiKey');
+    const providerSelect = document.getElementById('provider');
+    const modelSelect = document.getElementById('model');
+    const baseUrlInput = document.getElementById('baseUrl');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const modelInfo = document.getElementById('modelInfo');
+
+    // 更新模型列表
+    providerSelect.addEventListener('change', () => {
+      const provider = providerSelect.value;
+      const models = providerConfigs[provider]?.models || {};
+      
+      modelSelect.innerHTML = Object.entries(models)
+        .map(([id, name]) => `<option value="${id}">${name}</option>`)
+        .join('');
+      
+      updateModelInfo();
+    });
+
+    modelSelect.addEventListener('change', updateModelInfo);
+
+    function updateModelInfo() {
+      modelInfo.textContent = `模型: ${modelSelect.options[modelSelect.selectedIndex].text}`;
+    }
+
+    // 设置输入
+    function setInput(text) {
+      chatInput.value = text;
+      chatInput.focus();
+    }
+
+    // 添加消息
+    function addMessage(role, content, isStreaming = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${role}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.textContent = role === 'user' ? '你' : 'mi';
+      
+      const contentDiv = document.createElement('div');
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'message-content';
+      bubble.id = `msg-${Date.now()}`;
+      
+      if (isStreaming) {
+        bubble.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+      } else {
+        bubble.innerHTML = formatContent(content);
+      }
+      
+      contentDiv.appendChild(bubble);
+      
+      const meta = document.createElement('div');
+      meta.className = 'message-meta';
+      meta.textContent = new Date().toLocaleTimeString();
+      contentDiv.appendChild(meta);
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(contentDiv);
+      
+      // 移除欢迎消息
+      const welcome = chatMessages.querySelector('.welcome-message');
+      if (welcome) welcome.remove();
+      
+      chatMessages.appendChild(messageDiv);
+      scrollToBottom();
+      
+      return bubble.id;
+    }
+
+    // 格式化内容
+    function formatContent(content) {
+      // 转义HTML
+      content = content.replace(/&/g, '&amp;')
+                       .replace(/</g, '&lt;')
+                       .replace(/>/g, '&gt;');
+      
+      // 代码块
+      content = content.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+      
+      // 行内代码
+      content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
+      
+      // 换行
+      content = content.replace(/\n/g, '<br>');
+      
+      return content;
+    }
+
+    // 更新消息
+    function updateMessage(id, content) {
+      const bubble = document.getElementById(id);
+      if (bubble) {
+        bubble.innerHTML = formatContent(content);
+      }
+    }
+
+    // 滚动到底部
+    function scrollToBottom() {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // 设置状态
+    function setStatus(status, text) {
+      statusDot.className = 'status-dot' + (status ? ` ${status}` : '');
+      statusText.textContent = text;
+    }
+
+    // 发送消息
+    async function sendMessage() {
+      const message = chatInput.value.trim();
+      if (!message || isGenerating) return;
+      
+      const apiKey = apiKeyInput.value.trim();
+      if (!apiKey) {
+        alert('请先输入 API Key');
+        apiKeyInput.focus();
+        return;
+      }
+      
+      // 添加用户消息
+      addMessage('user', message);
+      messageHistory.push({ role: 'user', content: message });
+      
+      // 清空输入
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+      
+      // 显示加载中
+      isGenerating = true;
+      sendBtn.disabled = true;
+      setStatus('connecting', '生成中...');
+      
+      const messageId = addMessage('assistant', '', true);
+      
+      try {
+        const provider = providerSelect.value;
+        const model = modelSelect.value;
+        const baseUrl = baseUrlInput.value.trim() || providerConfigs[provider]?.baseUrl;
+        
+        // 构建消息历史
+        const messages = [
+          { role: 'system', content: '你是 Xiaomi Code，一个智能编程助手。为发烧友提供专业、高效的编程帮助。' },
+          ...messageHistory.slice(-10) // 保留最近10条
+        ];
+        
+        // 调用API
+        const response = await fetch(`${baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            temperature: 0.7,
+            max_tokens: 2000,
+            stream: true
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        }
+        
+        // 处理流式响应
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullContent = '';
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n');
+          
+          for (const line of lines) {
+            if (!line.trim() || line === 'data: [DONE]') continue;
+            
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                const content = data.choices?.[0]?.delta?.content;
+                if (content) {
+                  fullContent += content;
+                  updateMessage(messageId, fullContent);
+                  scrollToBottom();
+                }
+              } catch (e) {
+                // 忽略解析错误
+              }
+            }
+          }
+        }
+        
+        // 保存到历史
+        messageHistory.push({ role: 'assistant', content: fullContent });
+        
+        setStatus('', '就绪');
+        
+      } catch (error) {
+        console.error('Error:', error);
+        updateMessage(messageId, `❌ 错误: ${error.message}`);
+        setStatus('error', '请求失败');
+      } finally {
+        isGenerating = false;
+        sendBtn.disabled = false;
+      }
+    }
+
+    // 事件监听
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = chatInput.scrollHeight + 'px';
+    });
+
+    // 初始化
+    providerSelect.dispatchEvent(new Event('change'));
+  </script>
+</body>
+</html>
